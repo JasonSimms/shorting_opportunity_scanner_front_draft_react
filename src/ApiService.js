@@ -2,8 +2,6 @@
 
 // Mock API Calls
 function apiCallDelay(data, timeoutRange = [100, 3000]) {
-    console.log('calling')
-    console.log(data)
     return new Promise((res) => {
         const timeout = Math.random() * (timeoutRange[1] - timeoutRange[0]) + timeoutRange[0];
         setTimeout(() => { res({ status: 200, message: 'success', data: data }) }, timeout)

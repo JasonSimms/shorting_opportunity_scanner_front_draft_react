@@ -8,10 +8,8 @@ const StockPerformance = () => {
   useEffect(() => {
     // Function to fetch stock data
     const fetchStockData = async () => {
-      // setStockData({ performance1Day: 0.3, performance3Days: 2.1, performance5Days: 4, performance1Month: -10 });
       try {
         const response = await getMarketPerformance();
-        console.log('wtf', response)
         setStockData(response.data); // Assuming the API returns the stock data in a suitable format
       } catch (error) {
         console.error('Error fetching stock data:', error);
@@ -38,13 +36,15 @@ const StockPerformance = () => {
   };
 
   const performanceData = [
-    { label: '1 Day Performance', value: stockData?.performance1Day },
-    { label: '3 Days Performance', value: stockData?.performance3Day },
-    { label: '5 Days Performance', value: stockData?.performance5Day },
-    { label: '1 Month Performance', value: stockData?.performance1Month },
+    { label: '1 Day', value: stockData?.performance1Day },
+    { label: '3 Days', value: stockData?.performance3Day },
+    { label: '5 Days', value: stockData?.performance5Day },
+    { label: '1 Month', value: stockData?.performance1Month },
   ];
 
   return (
+    <div>
+<h2>Spy Performance</h2>
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {performanceData.map((performance, index) => (
         <div
@@ -60,6 +60,8 @@ const StockPerformance = () => {
         </div>
       ))}
     </div>
+    </div>
+
   );
 };
 
