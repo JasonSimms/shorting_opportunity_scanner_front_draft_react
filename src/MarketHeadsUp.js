@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getMarketPerformance } from './ApiService';
 // import axios from 'axios';
 
 const StockPerformance = () => {
@@ -7,13 +8,14 @@ const StockPerformance = () => {
   useEffect(() => {
     // Function to fetch stock data
     const fetchStockData = async () => {
-      setStockData({ performance1Day: 0.3, performance3Days: 2.1, performance5Days: 4, performance1Month: -10 });
-      // try {
-      //   const response = await axios.get('https://api.example.com/stock/TSLA');
-      //   setStockData(response.data); // Assuming the API returns the stock data in a suitable format
-      // } catch (error) {
-      //   console.error('Error fetching stock data:', error);
-      // }
+      // setStockData({ performance1Day: 0.3, performance3Days: 2.1, performance5Days: 4, performance1Month: -10 });
+      try {
+        const response = await getMarketPerformance();
+        console.log('wtf', response)
+        setStockData(response.data); // Assuming the API returns the stock data in a suitable format
+      } catch (error) {
+        console.error('Error fetching stock data:', error);
+      }
     };
 
     // Fetch stock data when the component mounts
@@ -37,8 +39,8 @@ const StockPerformance = () => {
 
   const performanceData = [
     { label: '1 Day Performance', value: stockData?.performance1Day },
-    { label: '3 Days Performance', value: stockData?.performance3Days },
-    { label: '5 Days Performance', value: stockData?.performance5Days },
+    { label: '3 Days Performance', value: stockData?.performance3Day },
+    { label: '5 Days Performance', value: stockData?.performance5Day },
     { label: '1 Month Performance', value: stockData?.performance1Month },
   ];
 
