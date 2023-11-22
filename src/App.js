@@ -1,14 +1,19 @@
 import './App.css';
-import MyComponent from './AG_grid';
+import BotScreenerTable from './BotScreenerTable';
 import Banner from './Banner';
 import MarketHeadsUp from './MarketHeadsUp';
+
+function setActiveTicker(ticker) {
+  return console.log('setactiveticker', ticker)
+}
+
 
 function App() {
   return (
     <div className="App">
-        <Banner />
-        <MarketHeadsUp />
-        <MyComponent />
+      <Banner />
+      <MarketHeadsUp />
+      <BotScreenerTable setActiveTicker={setActiveTicker} />
     </div>
   );
 }

@@ -27,8 +27,7 @@ import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
 
-
-const Grid = () => {
+const Grid = ({setActiveTicker}) => {
   const [rowData] = useState([
     { Ticker: "SPY", RSI: 75, Stochastics: 80, Bollinger: 85 },
     { Ticker: "IWM", RSI: 60, Stochastics: 50, Bollinger: 60 },
@@ -37,23 +36,54 @@ const Grid = () => {
     { Ticker: "XLP", RSI: 50, Stochastics: 20, Bollinger: -50 },
   ]);
 
+
+
+  const tableContainerStyle ={  paddingLeft: "40px", display: "flex", gap: "20px", alignContent:'space-between', alignItems: 'center'}
+  
+  const getRowStyle = params => {
+    if (params.data.RSI > 70 && params.data.Stochastics > 79 && params.data.Bollinger > 80) {   //Ensure these match the icon selection in createCellRenderer
+      return { border: '2px solid green', fontWeight: 'bold', fontSize: '1.5em' };
+    }
+    return null;
+  };
+
+  const createCellRenderer = (threshold) => {
+    return params => {
+      if (params.value > threshold) {
+        return (
+          <div><span className="ag-icon ag-icon-tick" /> {params.value}</div>
+        )
+      } else return (
+        <div><span className="ag-icon ag-icon-minus" /> {params.value}</div>
+      )
+    };
+  };
+
   const [columnDefs] = useState([
-    { field: "Ticker" },
-    { field: "RSI" },
-    { field: "Stochastics" },
-    { field: "Bollinger" }
+    { field: "Ticker", width: '110px' },
+    {
+      field: "RSI",
+      cellRenderer: createCellRenderer(70), // ensure this matches rowstyle
+      width: '120px'
+    },
+    {
+      field: "Stochastics",
+      cellRenderer: createCellRenderer(79), // ensure this matches rowstyle
+      width: '120px'
+
+    },
+    {
+      field: "Bollinger",
+      cellRenderer: createCellRenderer(80),
+      width: '120px' // ensure this matches rowstyle
+    }
   ]);
 
-  const tableContainerStyle = {
-    width: "80%", display: "flex", justifyContent: "center", alignItems: "center"
-  }
-
-
   return (
-    <div className="table-container" style={{ tableContainerStyle }}>
-      <h3>Bot Test Results</h3>
-      <div id="qualificationGrid" className="ag-theme-material" style={{ height: 300, widows: 500 }}>
-        <AgGridReact rowData={rowData} columnDefs={columnDefs}></AgGridReact>
+    <div className="table-container" style={ tableContainerStyle }>
+      <h2>Screener Findings</h2>
+      <div id="qualificationGrid" className="ag-theme-material" style={{ height: 300, width: 500 }}>
+        <AgGridReact rowData={rowData} columnDefs={columnDefs} getRowStyle={getRowStyle} onRowClicked={(params)=>setActiveTicker(params.data.Ticker)} />
       </div>
     </div>
   );
