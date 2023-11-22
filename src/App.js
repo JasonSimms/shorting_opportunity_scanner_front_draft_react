@@ -5,6 +5,7 @@ import './App.css';
 import BotScreenerTable from './BotScreenerTable';
 import Banner from './Banner';
 import MarketHeadsUp from './MarketHeadsUp';
+import Chart from'./Chart';
 
 function App() {
   const [activeTicker, setActiveTicker] = useState(null);
@@ -14,9 +15,7 @@ function App() {
       <Banner />
       <MarketHeadsUp />
       <BotScreenerTable setActiveTicker={setActiveTicker} />
-      <div>
-        TODO active ticker: {activeTicker}
-      </div>
+      <Chart activeTicker={activeTicker}/>
     </div>
   );
 }
