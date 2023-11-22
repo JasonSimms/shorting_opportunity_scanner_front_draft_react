@@ -15,7 +15,11 @@ function generateRandomNumber(min, max) {
 
 // get Spy short term performance
 export function getMarketPerformance() {
-    const randomNumber = () => { return ((Math.random() * 6).toFixed(1)) };
+    const randomNumber = () => {
+        const anyNumber = generateRandomNumber(-10, 10)
+        const roundedNumber = anyNumber.toFixed(1)
+        return (roundedNumber)
+    };
     const mockData = {
         'performance1Day': randomNumber(),
         'performance3Day': randomNumber(),

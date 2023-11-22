@@ -22,9 +22,9 @@ const StockPerformance = () => {
 
   const getBackgroundColor = (value) => {
     if (value > 2) {
-      return 'darkgreen';
+      return '#408800';
     } else if (value > 0) {
-      return 'lightgreen';
+      return '#397a00';
     } else if (value < 0 && value > -2) {
       return 'lightcoral';
     } else if (value <= -2) {
@@ -53,6 +53,7 @@ const StockPerformance = () => {
             flex: 1,
             margin: '10px',
             backgroundColor: getBackgroundColor(performance.value),
+            borderRadius: "0 5px 0 5px"
           }}
         >
           <h3>{performance.label}</h3>

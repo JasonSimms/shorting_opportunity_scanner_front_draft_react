@@ -6,8 +6,9 @@ const Banner = () => {
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: '0px 30px 0px 40px',
-        background: 'linear-gradient(to left, #C8E6C9 0%, #388E3C 50%, #388E3C 100%)',
+        background: 'linear-gradient(to left, #F0F0F0 0%, #6F9824 50%, #6F9824 100%)',
         color: 'white',
+        borderRadius: '0 10px 10px 10px'
     };
 
     const titleStyle = {

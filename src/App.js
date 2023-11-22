@@ -1,19 +1,22 @@
+import { useState } from 'react';
+
 import './App.css';
+
 import BotScreenerTable from './BotScreenerTable';
 import Banner from './Banner';
 import MarketHeadsUp from './MarketHeadsUp';
 
-function setActiveTicker(ticker) {
-  return console.log('setactiveticker', ticker)
-}
-
-
 function App() {
+  const [activeTicker, setActiveTicker] = useState(null);
+
   return (
     <div className="App">
       <Banner />
       <MarketHeadsUp />
       <BotScreenerTable setActiveTicker={setActiveTicker} />
+      <div>
+        TODO active ticker: {activeTicker}
+      </div>
     </div>
   );
 }
