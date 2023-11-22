@@ -31,12 +31,19 @@ export function getMarketPerformance() {
 
 // get bot results 
 export function getBotResults() {
-    const mockData = {
-        RSI: generateRandomNumber(20, 75),
-        // MACDDivergence: generateRandomNumber(0, 10),  this may be more challenging to quantify maybe try charting.
-        Stochastics: generateRandomNumber(0, 100), //80% or above is overbought
-        BollingerProximity: generateRandomNumber(-20, 0) //`SMA is ${distancePercentage.toFixed(2)}% away from the upper Bollinger Band.`
-    }
+    const mockData = [
+        { Ticker: "SPY", RSI: 75, Stochastics: 80, Bollinger: 85 },
+        { Ticker: "IWM", RSI: 60, Stochastics: 50, Bollinger: 60 },
+        { Ticker: "VGT", RSI: 20, Stochastics: 10, Bollinger: -5 },
+        { Ticker: "XOP", RSI: 80, Stochastics: 60, Bollinger: 105 },
+        { Ticker: "XLP", RSI: 50, Stochastics: 20, Bollinger: -50 },
+      ]
+    // const mockData = {
+    //     RSI: generateRandomNumber(20, 75),
+    //     // MACDDivergence: generateRandomNumber(0, 10),  this may be more challenging to quantify maybe try charting.
+    //     Stochastics: generateRandomNumber(0, 100), //80% or above is overbought
+    //     BollingerProximity: generateRandomNumber(-20, 0) //`SMA is ${distancePercentage.toFixed(2)}% away from the upper Bollinger Band.`
+    // }
     return apiCallDelay(mockData)
 }
 

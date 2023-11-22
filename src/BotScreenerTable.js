@@ -20,22 +20,33 @@
   ** Will be expressed in distance from the upper band.  A negative value would indicate above the upper band
   
 */
-import { useState } from "react";
+import { useState, useEffect } from 'react';
+
 import { AgGridReact } from "ag-grid-react";
+import { getBotResults } from './ApiService';
 
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-material.css";
 
 
 const Grid = ({setActiveTicker}) => {
-  const [rowData] = useState([
-    { Ticker: "SPY", RSI: 75, Stochastics: 80, Bollinger: 85 },
-    { Ticker: "IWM", RSI: 60, Stochastics: 50, Bollinger: 60 },
-    { Ticker: "VGT", RSI: 20, Stochastics: 10, Bollinger: -5 },
-    { Ticker: "XOP", RSI: 80, Stochastics: 60, Bollinger: 105 },
-    { Ticker: "XLP", RSI: 50, Stochastics: 20, Bollinger: -50 },
-  ]);
 
+  const [rowData, setRowData] = useState(null);
+
+  useEffect(() => {
+    // Function to fetch bot data
+    const fetchTableData = async () => {
+      try {
+        const response = await getBotResults();
+        setRowData(response.data);
+      } catch (error) {
+        console.error('Error fetchTableData:', error);
+      }
+    };
+
+    // Fetch stock data when the component mounts
+    fetchTableData();
+  }, []); // Empty dependency array ensures the effect runs only once on mount
 
 
   const tableContainerStyle ={  paddingLeft: "40px", display: "flex", gap: "20px", alignContent:'space-between', alignItems: 'center'}
