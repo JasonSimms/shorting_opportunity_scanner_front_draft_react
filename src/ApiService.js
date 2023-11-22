@@ -15,6 +15,7 @@ function generateRandomNumber(min, max) {
 
 // get Spy short term performance
 export function getMarketPerformance() {
+    console.log('fired getmarketperformance')
     const randomNumber = () => {
         const anyNumber = generateRandomNumber(-10, 10)
         const roundedNumber = anyNumber.toFixed(1)
@@ -108,15 +109,15 @@ export async function getPolygonChartData(ticker) {
             };
         } else {
             console.error('Error from polygon API!', response);
-            return {
+            throw {
                 status: response.status,
-                message: 'failure',
+                message: 'Failed to fetch ApiData',
                 data: null,
             };
         }
     } catch (error) {
         console.error('Error in fetch:', error);
-        return {
+        throw {
             status: 500,
             message: 'failure',
             data: null,

@@ -39,7 +39,7 @@ const Chart = ({ activeTicker }) => {
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
-                setError(error)
+                setError(error.message)
             }
         };
 
@@ -79,6 +79,14 @@ const Chart = ({ activeTicker }) => {
                 data: chartData.closing,
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
+                tension: 0.1
+            }, {
+                label: 'SPY',
+                data: chartData.closing.map(el =>{
+                    return el-10
+                }),
+                fill: false,
+                borderColor: 'rgba(255, 99, 132, 0.5)',
                 tension: 0.1
             }]
         };
