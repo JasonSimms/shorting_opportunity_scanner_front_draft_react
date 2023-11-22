@@ -94,13 +94,17 @@ export async function getPolygonChartData(ticker) {
     try {
         const response = await fetch(buildPolygonApiUrl(apiParams));
 
-        if (response.ok) {
-            console.log('polygonResponse: ', response);
-            const data = {}; // Modify this based on the actual response structure
+        if (response.ok){
+            const responseData = await response.json();
+            // console.log('polygonResponse: ', Object.keys(responseData));
+            // Check if the data is nested under a property (e.g., 'data')
+            const data = responseData.data || responseData;
+            const chartData = data.results;
+            // console.log(chartData);
             return {
                 status: 200,
                 message: 'success',
-                data,
+                data : chartData,
             };
         } else {
             console.error('Error from polygon API!', response);

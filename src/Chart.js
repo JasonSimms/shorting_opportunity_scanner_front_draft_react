@@ -11,14 +11,20 @@ import {
     Legend,
 } from 'chart.js';
 import { getPolygonChartData } from './ApiService';
+import { formatDate } from './Utilities';
 
 
-const apiKey = process.env.REACT_APP_POLYGON || null;
+const transposePolygonData = (dataSet) => {
+    const closingArray = dataSet.map(entry => entry.c);
+    const labelsArray = dataSet.map(entry => formatDate(entry.t));
+
+    return { closing: closingArray, labels: labelsArray };
+}
 
 
 
 const Chart = ({ activeTicker }) => {
-    const [data, setData] = useState(null);
+    const [chartData, setChartData] = useState(null);
     const [error, setError] = useState(null);
 
     useEffect(() => {
@@ -26,11 +32,10 @@ const Chart = ({ activeTicker }) => {
             try {
                 console.log('useEffect called in Chart.js')
                 if (activeTicker !== null) {
-
-                    // Replace 'your-api-endpoint' with your actual API endpoint
+                    setError(null) // Clear existing error messages.
                     const response = await getPolygonChartData(activeTicker);
-                    console.log('Response: ', response)
-                    response.status === 200 ? setData(response) : setError(response)
+                    const formattedData = transposePolygonData(response.data);
+                    response.status === 200 ? setChartData(formattedData) : setError(response)
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -52,7 +57,7 @@ const Chart = ({ activeTicker }) => {
                 <p>{JSON.stringify(error)}</p>
             </div>
         )
-    } else {
+    } else if (chartData) {
         ChartJS.register(
             CategoryScale,
             LinearScale,
@@ -63,13 +68,15 @@ const Chart = ({ activeTicker }) => {
             Legend
         );
 
-        // const labels = Utils.months({count: 7});
-        const labels = [1, 2, 3, 4, 5, 6, 7]
+
+        // const labels = [1, 2, 3, 4, 5, 6, 7]
+        const { labels } = chartData;
+
         const data = {
             labels: labels,
             datasets: [{
-                label: 'My First Dataset',
-                data: [65, 59, 80, 81, 56, 55, 40],
+                label: activeTicker,
+                data: chartData.closing,
                 fill: false,
                 borderColor: 'rgb(75, 192, 192)',
                 tension: 0.1
@@ -83,7 +90,7 @@ const Chart = ({ activeTicker }) => {
                 },
                 title: {
                     display: true,
-                    text: 'Chart.js Line Chart',
+                    text: 'Performance',
                 },
             },
         };
