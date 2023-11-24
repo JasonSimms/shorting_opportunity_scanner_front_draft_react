@@ -10,11 +10,11 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { getPolygonChartData } from './ApiService';
+import { getChartData } from './ApiService';
 import { formatDate } from './Utilities';
 
-
 const transposePolygonData = (dataSet) => {
+    if(!dataSet) return null;
     const closingArray = dataSet.map(entry => entry.c);
     const labelsArray = dataSet.map(entry => formatDate(entry.t));
 
@@ -33,7 +33,7 @@ const Chart = ({ activeTicker }) => {
                 console.log('useEffect called in Chart.js')
                 if (activeTicker !== null) {
                     setError(null) // Clear existing error messages.
-                    const response = await getPolygonChartData(activeTicker);
+                    const response = await getChartData(activeTicker);
                     const formattedData = transposePolygonData(response.data);
                     response.status === 200 ? setChartData(formattedData) : setError(response)
                 }
