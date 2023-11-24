@@ -1,47 +1,59 @@
 /* Emulating server back end calls */
-import {formatDate} from '../Utilities';
+import { formatDate } from '../Utilities';
+const polygonData = require('./bin/polygonData.js');
 
 
 /* POLYGON.IO */
 //global rate limiting for free API is 5 calls per minute. 
 let lastApiCallTime = 0;
 let apiCallCount = 0;
+let cache = {};  //store all polygon data to reduce request traffic.
+
 
 async function makePolygonApiCall(endpoint) {
     const now = Date.now();
     const timeSinceLastCall = now - lastApiCallTime;
+    console.log('cache status', cache);
 
-    // Check if enough time has passed since the last API call
-    if (timeSinceLastCall < 60000 && apiCallCount >= 5) {
-        // If the rate limit is reached, wait for the next minute
-        const waitTime = 60000 - timeSinceLastCall;
-        await new Promise(resolve => setTimeout(resolve, waitTime));
+    if (!cache[endpoint] || now - cache[endpoint].timestamp > 60000) {   //This pseudocache will only work on a stable back end.  Frequent dev restarts will obviously reset this cache.
 
-        // Reset the API call count and update the last API call time
-        apiCallCount = 0;
+        // Check if enough time has passed since the last API call
+        if (timeSinceLastCall < 60000 && apiCallCount >= 5) {
+            // If the rate limit is reached, wait for the next minute
+            const waitTime = 60000 - timeSinceLastCall;
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+
+            // Reset the API call count and update the last API call time
+            apiCallCount = 0;
+            lastApiCallTime = Date.now();
+        }
+
+        // Make the API call
+        console.log('making an api call to polygon', endpoint)
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        // Update the last API call time and increment the API call count
         lastApiCallTime = Date.now();
+        data.timestamp = lastApiCallTime;
+        if(data.status === 'OK') cache[endpoint] = data
+        apiCallCount++;
+
+        return data;
+    } else {
+        return cache[endpoint];
     }
-
-    // Make the API call
-    const response = await fetch(endpoint);
-    const data = await response.json();    
-
-    // Update the last API call time and increment the API call count
-    lastApiCallTime = Date.now();
-    apiCallCount++;
-
-    return data;
 }
 
 const transposePolygonData = (dataSet) => {
-    if(!dataSet) return null;
+    if (!dataSet) return null;
     const closingArray = dataSet.map(entry => entry.c);
     const labelsArray = dataSet.map(entry => formatDate(entry.t));
     return { closing: closingArray, labels: labelsArray };
 }
 
 // get chart data
-export  async function getChartDataFromServer(ticker) {
+export async function getChartDataFromServer(ticker) {
     let apiData = await getPolygonChartData(ticker);
     apiData.data = transposePolygonData(apiData.data); //Format for front end -chart.
     return apiData;
@@ -49,6 +61,14 @@ export  async function getChartDataFromServer(ticker) {
 
 
 export async function getPolygonChartData(ticker) {
+
+    // TODO using cached data instead of live! make a front end toggle to get live data.
+    return ({
+        status:200,
+        message: 'success',
+        data: polygonData.find(item => item.ticker === ticker).results
+    })
+    // ---------------------------------------------------------------------------------
     const polygonApiKey = process.env.REACT_APP_POLYGON || null;
 
     const apiParams = {

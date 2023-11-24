@@ -13,20 +13,19 @@ import {
 import { getChartData } from './ApiService';
 
 
-
-
-const Chart = ({ activeTicker }) => {
+const Chart = ({ activeTicker, spyData }) => {
     const [chartData, setChartData] = useState(null);
     const [error, setError] = useState(null);
 
+
     useEffect(() => {
         const fetchData = async () => {
+            if (activeTicker === 'SPY') return;  // use the ref data from 
             try {
-                if (activeTicker !== null) {
-                    setError(null) // Clear existing error messages.
-                    const response = await getChartData(activeTicker);
-                    response.status === 200 ? setChartData(response.data) : setError(response)
-                }
+                setError(null) // Clear existing error messages.
+                const response = await getChartData(activeTicker);
+                console.log('ive got res...', response.data);
+                response.status === 200 ? setChartData(response.data) : setError(response)
             } catch (error) {
                 console.error('Error fetching data:', error);
                 setError(error.message)
@@ -38,16 +37,14 @@ const Chart = ({ activeTicker }) => {
     }, [activeTicker]); // The dependency array ensures useEffect is called whenever activeTicker changes
 
 
-    if (!activeTicker) {
-        return (<h3>Select a security of interest in the table above to see more analysis</h3>)
-    } else if (error) {
+    if (error) {
         return (
             <div>
                 <h3>Error!</h3>
                 <p>{JSON.stringify(error)}</p>
             </div>
         )
-    } else if (chartData) {
+    } else if (spyData) {
         ChartJS.register(
             CategoryScale,
             LinearScale,
@@ -58,25 +55,38 @@ const Chart = ({ activeTicker }) => {
             Legend
         );
 
-        const { labels } = chartData;
+        const { labels } = spyData;
+
+        let datasets = [];
+
+        // We want to compare every performance to the SPY. So always show spy as well as the activeTicker.
+        if (activeTicker !== 'SPY' && !!chartData) {
+            console.log('lets load something', activeTicker, 'chartData', chartData);
+            datasets =
+                [{
+                    label: activeTicker,
+                    data: chartData.closing,
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }, {
+                    label: 'SPY',
+                    data: spyData.closing,
+                    fill: false,
+                    borderColor: 'rgba(255, 99, 132, 0.5)',
+                    tension: 0.1
+                }]
+        } else datasets = [{
+            label: 'SPY',
+            data: spyData.closing,
+            fill: false,
+            borderColor: 'rgba(255, 99, 132, 0.5)',
+            tension: 0.1
+        }]
 
         const data = {
             labels: labels,
-            datasets: [{
-                label: activeTicker,
-                data: chartData.closing,
-                fill: false,
-                borderColor: 'rgb(75, 192, 192)',
-                tension: 0.1
-            }, {
-                label: 'SPY',
-                data: chartData.closing.map(el =>{
-                    return el-10
-                }),
-                fill: false,
-                borderColor: 'rgba(255, 99, 132, 0.5)',
-                tension: 0.1
-            }]
+            datasets
         };
         const options = {
             responsive: true,
