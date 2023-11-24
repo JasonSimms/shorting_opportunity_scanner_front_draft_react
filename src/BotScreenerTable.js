@@ -71,22 +71,22 @@ const Grid = ({setActiveTicker}) => {
   };
 
   const [columnDefs] = useState([
-    { field: "Ticker", width: '110px' },
+    { field: "Ticker", width: '90' },
     {
       field: "RSI",
       cellRenderer: createCellRenderer(70), // ensure this matches rowstyle
-      width: '120px'
+      width: '120'
     },
     {
       field: "Stochastics",
       cellRenderer: createCellRenderer(79), // ensure this matches rowstyle
-      width: '120px'
+      width: '120'
 
     },
     {
       field: "Bollinger",
       cellRenderer: createCellRenderer(80),
-      width: '120px' // ensure this matches rowstyle
+      width: '120' // ensure this matches rowstyle
     }
   ]);
 

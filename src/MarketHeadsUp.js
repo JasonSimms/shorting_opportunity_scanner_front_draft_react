@@ -9,7 +9,6 @@ const StockPerformance = () => {
     const fetchData = async () => {
       try {
         let data = getCookie('marketData');   // Cookies implemented limit the API rate calls. 
-        console.log('ive got a cookie!', data);
         if (!data) {
           data = await getMarketPerformance();
           setCookie('marketData', JSON.stringify(data.data), 0.00347222222);  //5min expiration on cookie
@@ -52,11 +51,9 @@ const StockPerformance = () => {
   if (!marketData) {
     return <h3>Loading Market Data....</h3>
   } else {
-    console.log(marketData);
     return (
       <div>
         <h2>SPY Performance</h2>
-        <p>{JSON.stringify(marketData)}</p>
         <div style={{ display: 'flex', flexDirection: 'row', width: '90%', marginLeft: "auto", marginRight: "auto", height: "10vh" }}>
           {performanceData.map((performance, index) => (
             <div
