@@ -1,33 +1,31 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { getMarketPerformance } from './ApiService';
 import { setCookie, getCookie } from './Utilities';
-// import axios from 'axios';
 
 const StockPerformance = () => {
   const [marketData, setMarketData] = useState(null);
 
-  const memoizedGetMarketPerformance = useMemo(() => getMarketPerformance, []);  // useMemo can be used if the user doesn't allow cookies.
-
   useEffect(() => {
-    // Function to fetch stock data
-    // Cookies implemented limit the API rate calls. 
-    const fetchStockData = async () => {
+    const fetchData = async () => {
       try {
-        let data = getCookie('marketData');
+        let data = getCookie('marketData');   // Cookies implemented limit the API rate calls. 
+        console.log('ive got a cookie!', data);
         if (!data) {
-          data = await memoizedGetMarketPerformance();
-          setCookie('marketData', JSON.stringify(data.data));
+          data = await getMarketPerformance();
+          setCookie('marketData', JSON.stringify(data.data), 0.00347222222);  //5min expiration on cookie
+          return setMarketData(data.data)
         } else {
           data = JSON.parse(data);
-        } setMarketData(data);
+          return setMarketData(data);
+        } 
       } catch (error) {
         console.error('Error fetching marketHeadsUp Data: ', error);
       }
     };
 
     // Fetch stock data when the component mounts
-    fetchStockData();
-  }, [memoizedGetMarketPerformance]); // Add memoizedGetMarketPerformance as a dependency
+    fetchData();
+  }, []);
 
   const getBackgroundColor = (value) => {
     if (value > 2) {
@@ -54,21 +52,24 @@ const StockPerformance = () => {
   if (!marketData) {
     return <h3>Loading Market Data....</h3>
   } else {
+    console.log(marketData);
     return (
       <div>
         <h2>SPY Performance</h2>
-        <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <p>{JSON.stringify(marketData)}</p>
+        <div style={{ display: 'flex', flexDirection: 'row', width: '90%', marginLeft: "auto", marginRight: "auto", height: "10vh" }}>
           {performanceData.map((performance, index) => (
             <div
               key={index}
               style={{
                 flex: 1,
-                margin: '10px',
+                margin: '5px',
+                padding: '5px',
                 backgroundColor: getBackgroundColor(performance.value),
                 borderRadius: "0 5px 0 5px"
               }}
             >
-              <h3>{performance.label}</h3>
+              <h4>{performance.label}</h4>
               <p>{performance.value}%</p>
             </div>
           ))}

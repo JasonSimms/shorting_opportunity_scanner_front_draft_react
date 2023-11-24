@@ -13,7 +13,7 @@ export function formatDate(timestamp) {
   }
 
 // Cookie Functions
-export function setCookie(name, payload, days){
+export function setCookie(name, payload, days = 1){
     let date = new Date();
     date.setTime(date.getTime() + (days*24*60*60*1000));
     let expires = "; expires=" + date.toUTCString();
