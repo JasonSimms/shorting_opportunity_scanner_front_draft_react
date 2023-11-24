@@ -1,4 +1,5 @@
 /* Emulating server back end calls */
+import {formatDate} from '../Utilities';
 
 
 /* POLYGON.IO */
@@ -32,18 +33,23 @@ async function makePolygonApiCall(endpoint) {
     return data;
 }
 
-
+const transposePolygonData = (dataSet) => {
+    if(!dataSet) return null;
+    const closingArray = dataSet.map(entry => entry.c);
+    const labelsArray = dataSet.map(entry => formatDate(entry.t));
+    return { closing: closingArray, labels: labelsArray };
+}
 
 // get chart data
 export  async function getChartDataFromServer(ticker) {
-    let apiData = getPolygonChartData(ticker);
+    let apiData = await getPolygonChartData(ticker);
+    apiData.data = transposePolygonData(apiData.data); //Format for front end -chart.
     return apiData;
 }
 
 
 export async function getPolygonChartData(ticker) {
     const polygonApiKey = process.env.REACT_APP_POLYGON || null;
-    console.log('getPolygonChartData Fired ticker: ', ticker);
 
     const apiParams = {
         ticker,

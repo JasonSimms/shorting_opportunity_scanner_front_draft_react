@@ -11,16 +11,7 @@ import {
     Legend,
 } from 'chart.js';
 import { getChartData } from './ApiService';
-import { formatDate } from './Utilities';
-
-const transposePolygonData = (dataSet) => {
-    if(!dataSet) return null;
-    const closingArray = dataSet.map(entry => entry.c);
-    const labelsArray = dataSet.map(entry => formatDate(entry.t));
-
-    return { closing: closingArray, labels: labelsArray };
-}
-
+import { getCookie, setCookie } from './Utilities';
 
 
 const Chart = ({ activeTicker }) => {
@@ -30,12 +21,16 @@ const Chart = ({ activeTicker }) => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                console.log('useEffect called in Chart.js')
                 if (activeTicker !== null) {
                     setError(null) // Clear existing error messages.
-                    const response = await getChartData(activeTicker);
-                    const formattedData = transposePolygonData(response.data);
-                    response.status === 200 ? setChartData(formattedData) : setError(response)
+                    let data = getCookie(activeTicker);
+                    if(!data){
+                        const response = await getChartData(activeTicker);
+                        setCookie(activeTicker, JSON.stringify(response.data), 0.00347222222) //5 min expiration
+                        data = response.data;
+                    } else {
+                        data = JSON.parse(data);
+                    }  return setChartData(data);
                 }
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -68,8 +63,6 @@ const Chart = ({ activeTicker }) => {
             Legend
         );
 
-
-        // const labels = [1, 2, 3, 4, 5, 6, 7]
         const { labels } = chartData;
 
         const data = {
@@ -104,9 +97,7 @@ const Chart = ({ activeTicker }) => {
         };
 
         return (<div>
-            <h1>Debug Chart.js: {typeof (activeTicker)} {activeTicker} </h1>
             <Line data={data} options={options} />
-
         </div>)
     }
 }
