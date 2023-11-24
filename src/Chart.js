@@ -58,7 +58,6 @@ const Chart = ({ activeTicker }) => {
             Legend
         );
 
-
         const { labels } = chartData;
 
         const data = {
@@ -93,9 +92,7 @@ const Chart = ({ activeTicker }) => {
         };
 
         return (<div>
-            <h1>Debug Chart.js: {typeof (activeTicker)} {activeTicker} </h1>
             <Line data={data} options={options} />
-
         </div>)
     }
 }
